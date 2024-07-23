@@ -1,15 +1,15 @@
 package BoardGame;
 
-public class board {
+public class Board {
 
 	private int rows;
 	private int colunms;
-	private piece[][]pieces;
-	
-	public board(int rows, int colunms) {
+	private Piece[][] pieces;
+
+	public Board(int rows, int colunms) {
 		this.rows = rows;
 		this.colunms = colunms;
-		pieces = new piece[rows][colunms];
+		pieces = new Piece[rows][colunms];
 	}
 
 	public int getRows() {
@@ -27,8 +27,13 @@ public class board {
 	public void setColunms(int colunms) {
 		this.colunms = colunms;
 	}
-	
-	
-	
-	
+
+	public Piece pieces(int row, int colunm) {
+		return pieces[row][colunm];
+	}
+
+	public Piece pieces (Position position) {
+       return pieces [position.getRow()][position.getColunm()];
+	}
+
 }
