@@ -15,6 +15,11 @@ public class ChessPieces extends Piece {
 		return color;
 	}
 
+	
+	public String ToString() {
+		return "R";
+	}
+
 		
 	
 	
