@@ -18,15 +18,20 @@ public class ChessMatch {
 		ChessPieces[][] mat = new ChessPieces[board.getRows()][board.getColunms()];
 		for (int i = 0; i < board.getRows(); i++) {
 			for (int j = 0; j < board.getColunms(); j++) {
-                 mat[i][j]= (ChessPieces)board.pieces(i, j);
+				mat[i][j] = (ChessPieces) board.pieces(i, j);
 			}
 		}
-        return mat;
+		return mat;
 	}
-	private void  InitialSetup() {
-		board.PlacePiece(new Rook(board,Color.WIHTE),new Position(2,1));
-		board.PlacePiece(new King(board,Color.WIHTE),new Position(5,1));
-       //exemplo de posiçao peça vai modificar
+
+	private void PlaceNewPiece(char colunm, int row, ChessPieces piece) {
+		board.PlacePiece(piece, new ChessPosition(colunm, (char) row).toPosition());
+	}
+
+	private void InitialSetup() {
+		PlaceNewPiece('b', 6, new Rook(board, Color.WIHTE));
+		PlaceNewPiece('e', 8, new King(board, Color.BLACK));
+		PlaceNewPiece('e', 1, new King(board, Color.WIHTE));
 	}
 
 }
