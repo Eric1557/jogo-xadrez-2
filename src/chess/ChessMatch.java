@@ -1,6 +1,8 @@
 package chess;
 
 import BoardGame.Board;
+import BoardGame.Piece;
+import BoardGame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
@@ -17,11 +19,36 @@ public class ChessMatch {
 		ChessPieces[][] mat = new ChessPieces[board.getRows()][board.getColunms()];
 		for (int i = 0; i < board.getRows(); i++) {
 			for (int j = 0; j < board.getColunms(); j++) {
-				mat[i][j] = (ChessPieces) board.pieces(i, j);
+				mat[i][j] = (ChessPieces) board.piece(i, j);
 			}
 		}
 		return mat;
 	}
+	
+	public ChessPieces performChessMove(ChessPosition sourcePosition,ChessPosition targetPosition) {
+		Position source = sourcePosition.toPosition();
+		Position target = targetPosition.toPosition();
+		ValidateSourcePosition(source);
+		Piece capturedPiece = makeMove(source ,target);
+		return (ChessPieces) capturedPiece;
+		
+	}
+	
+	public ChessPieces makeMove(Position source ,Position target) {
+		Piece p = board.RemovePiece(source);
+		ChessPieces capturedPiece = (ChessPieces) board.RemovePiece(target);
+		board.PlacePiece(p, target);
+		return capturedPiece;
+	}
+	
+	private void ValidateSourcePosition(Position position) {
+		if(!board.ThereIsAPiece(position)) {
+			throw new ChessExceptions("there is no piece on source position");
+			
+		}
+	}
+	
+	
 
 	private void PlaceNewPiece(char colunm, int row, ChessPieces piece) {
 		board.PlacePiece(piece, new ChessPosition(colunm, (char) row).toPosition());

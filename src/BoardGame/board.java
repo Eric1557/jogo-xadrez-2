@@ -23,11 +23,24 @@ public class Board {
 		return colunms;
 	}
 
-	public Piece pieces(int row, int colunm) {
+	public Piece piece(int row, int colunm) {
 		if (!PositionExists(row, colunm)) {
 			throw new BoardException("Position not on the board ");
 		}
 		return pieces[row][colunm];
+	}
+
+	public Piece RemovePiece(Position position) {
+		if (!PositionExists(position)) {
+			throw new BoardException("Position not on the board");
+		}
+		if (pieces(position) == null) {
+			return null;
+		}
+		Piece aux = pieces(position);
+		aux.position = null;
+		pieces[position.getRow()][position.getColunm()] = null;
+		return aux;
 	}
 
 	public Piece pieces(Position position) {
