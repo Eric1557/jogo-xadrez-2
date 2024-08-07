@@ -10,6 +10,10 @@ public class ChessMatch {
 
 	private Board board;
 
+	public ChessMatch() {
+		
+	}
+	
 	public ChessMatch(Board board) {
 		board = new Board(8, 8);
 		InitialSetup();
