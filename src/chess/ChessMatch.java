@@ -50,10 +50,11 @@ public class ChessMatch {
 			throw new ChessExceptions("there is no piece on source position");
 			
 		}
+		if(!board.pieces(position).IsThereAnyPossibleMove()) {
+			throw new ChessExceptions("there is no possible moves for the chosen piece");
+		}
 	}
 	
-	
-
 	private void PlaceNewPiece(char colunm, int row, ChessPieces piece) {
 		board.PlacePiece(piece, new ChessPosition(colunm, (char) row).toPosition());
 	}
