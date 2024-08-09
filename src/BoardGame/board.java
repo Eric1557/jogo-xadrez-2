@@ -5,7 +5,7 @@ public class Board {
 	private int rows;
 	private int colunms;
 	private Piece[][] pieces;
-
+	
 	public Board(int rows, int colunms) {
 		if (rows < 1 || colunms < 1) {
 			throw new BoardException("error creating board: there must be at least 1 row and 1 column");
@@ -14,7 +14,7 @@ public class Board {
 		this.colunms = colunms;
 		pieces = new Piece[rows][colunms];
 	}
-
+	
 	public int getRows() {
 		return rows;
 	}
