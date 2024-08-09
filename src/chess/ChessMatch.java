@@ -11,9 +11,9 @@ public class ChessMatch {
 	private Board board;
 
 	public ChessMatch() {
-		
+
 	}
-	
+
 	public ChessMatch(Board board) {
 		board = new Board(8, 8);
 		InitialSetup();
@@ -28,33 +28,41 @@ public class ChessMatch {
 		}
 		return mat;
 	}
-	
-	public ChessPieces performChessMove(ChessPosition sourcePosition,ChessPosition targetPosition) {
+
+	public ChessPieces performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
 		Position source = sourcePosition.toPosition();
 		Position target = targetPosition.toPosition();
 		ValidateSourcePosition(source);
-		Piece capturedPiece = makeMove(source ,target);
+		ValidateTargetPosition(source, target);
+		Piece capturedPiece = makeMove(source, target);
 		return (ChessPieces) capturedPiece;
-		
+
 	}
-	
-	public ChessPieces makeMove(Position source ,Position target) {
+
+	public ChessPieces makeMove(Position source, Position target) {
 		Piece p = board.RemovePiece(source);
 		ChessPieces capturedPiece = (ChessPieces) board.RemovePiece(target);
 		board.PlacePiece(p, target);
 		return capturedPiece;
 	}
-	
+
 	private void ValidateSourcePosition(Position position) {
-		if(!board.ThereIsAPiece(position)) {
+		if (!board.ThereIsAPiece(position)) {
 			throw new ChessExceptions("there is no piece on source position");
-			
+
 		}
-		if(!board.pieces(position).IsThereAnyPossibleMove()) {
+		if (!board.pieces(position).IsThereAnyPossibleMove()) {
 			throw new ChessExceptions("there is no possible moves for the chosen piece");
 		}
 	}
-	
+
+	private void ValidateTargetPosition(Position source, Position target) {
+		if (!board.pieces(source).possibleMoves(target)) {
+			throw new ChessExceptions("the chosen piece cant't move to target");
+		}
+
+	}
+
 	private void PlaceNewPiece(char colunm, int row, ChessPieces piece) {
 		board.PlacePiece(piece, new ChessPosition(colunm, (char) row).toPosition());
 	}

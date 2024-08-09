@@ -28,9 +28,15 @@ public class Position {
 	}
 	
 	
+	public void setValues(int row,int colunm) {
+		this.row = row;
+		this.colunm = colunm;
+	}
+	
 	public String ToString() {
 		return row + "," + colunm;
 	}
+	
 	
 	
 }
