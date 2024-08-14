@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import BoardGame.Board;
 import BoardGame.Piece;
 import BoardGame.Position;
@@ -12,6 +15,11 @@ public class ChessMatch {
 	private int Turn;
 	private Color currentPlayer;
 	private Board board;
+	
+	private List<Piece> piecesOnTheBoard = new ArrayList<>();
+	private List<Piece> capturedPieces = new ArrayList<>();
+	
+	
 
 	public ChessMatch() {
 
@@ -68,9 +76,15 @@ public class ChessMatch {
 		Piece p = board.RemovePiece(source);
 		ChessPieces capturedPiece = (ChessPieces) board.RemovePiece(target);
 		board.PlacePiece(p, target);
+		
+		if(capturedPiece != null) {
+			piecesOnTheBoard.add(capturedPiece);
+			capturedPieces.add(capturedPiece);
+		}
 		return capturedPiece;
 	}
-
+		
+	
 	private void ValidateSourcePosition(Position position) {
 		if (!board.ThereIsAPiece(position)) {
 			throw new ChessExceptions("there is no piece on source position");
@@ -101,6 +115,7 @@ public class ChessMatch {
 
 	private void PlaceNewPiece(char colunm, int row, ChessPieces piece) {
 		board.PlacePiece(piece, new ChessPosition(colunm, (char) row).toPosition());
+		piecesOnTheBoard.add(piece);
 	}
 
 	private void InitialSetup() {
