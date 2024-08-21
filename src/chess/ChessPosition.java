@@ -26,12 +26,17 @@ public class ChessPosition {
 		return row;
 	}
 
+	public ChessPosition getChessPosition() {
+		return ChessPosition.FromPosition(toPosition());
+	}
+	
+	
 	protected Position toPosition() {
 		return new Position(8 - row,colunm - 'a');
 	}
 	
 	protected static ChessPosition FromPosition(Position position){
-		return new ChessPosition((char)('a' - position.getColunm()),(char) (8 - position.getRow()));
+		return new ChessPosition((char)('a' + position.getColunm()),(char) (8 - position.getRow()));
 	}
 	
 	@Override

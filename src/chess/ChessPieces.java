@@ -16,6 +16,13 @@ public abstract class ChessPieces extends Piece {
 		return color;
 	}
 
+	public ChessPosition getChessPosition() {
+		return ChessPosition.FromPosition(position);
+		
+	}
+	
+	
+	
 	
 	public String ToString() {
 		return "R";
