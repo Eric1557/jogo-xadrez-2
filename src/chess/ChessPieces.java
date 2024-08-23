@@ -47,6 +47,7 @@ public abstract class ChessPieces extends Piece {
 		
 		
 	}
+
 	
 	
 	
