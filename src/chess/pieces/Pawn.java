@@ -2,13 +2,17 @@ package chess.pieces;
 
 import BoardGame.Board;
 import BoardGame.Position;
+import chess.ChessMatch;
 import chess.ChessPieces;
 import chess.Color;
 
 public class Pawn extends ChessPieces {
 
-	public Pawn(Board board, Color color) {
+	private ChessMatch chessMatch;
+
+	public Pawn(Board board, Color color, ChessMatch chessMatch) {
 		super(board, color);
+		this.chessMatch = chessMatch;
 	}
 
 	@Override
@@ -36,8 +40,7 @@ public class Pawn extends ChessPieces {
 			if (getBoard().PositionExists(p) && getBoard().ThereIsAPiece(p)) {
 				mat[p.getRow()][p.getColunm()] = true;
 			}
-		}
-		else {
+		} else {
 			p.setValues(position.getRow() + 1, position.getColunm());
 			if (getBoard().PositionExists(p) && !getBoard().ThereIsAPiece(p)) {
 				mat[p.getRow()][p.getColunm()] = true;
@@ -56,12 +59,20 @@ public class Pawn extends ChessPieces {
 			if (getBoard().PositionExists(p) && getBoard().ThereIsAPiece(p)) {
 				mat[p.getRow()][p.getColunm()] = true;
 			}
-			
+			// special move en passant white
+			if (position.getRow() == 3) {
+				Position left = new Position(position.getRow(), position.getColunm() - 1);
+				if (getBoard().PositionExists(left) && isThereOponnentPiece(left)
+						&& getBoard().pieces(left) == chessMatch.getEnPassantVulnerable()) {
+					mat[left.getRow() - 1][left.getColunm()] = true;
+				}
+			}
+
 		}
 
 		return mat;
 	}
-	
+
 	public String Tostring() {
 		return "p";
 	}

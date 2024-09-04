@@ -21,15 +21,12 @@ public class ChessMatch {
 	private Board board;
 	private boolean check;
 	private boolean checkMate;
+	private ChessPieces enPassantVulnerable;
 
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
 
 	public ChessMatch() {
-
-	}
-
-	public ChessMatch(Board board) {
 		board = new Board(8, 8);
 		Turn = 1;
 		currentPlayer = Color.WIHTE;
@@ -50,6 +47,10 @@ public class ChessMatch {
 
 	public boolean getCheckMate() {
 		return checkMate;
+	}
+	
+	public ChessPieces getEnPassantVulnerable() {
+		return enPassantVulnerable;
 	}
 
 	public ChessPieces[][] getPieces() {
@@ -79,6 +80,9 @@ public class ChessMatch {
 			throw new ChessExceptions("you cant put yourself in check ");
 
 		}
+		
+		ChessPieces movedPiece = (ChessPieces)board.pieces(target);
+		
 		check = (testCheck(Opponnent(currentPlayer))) ? true : false;
 
 		if (testCheckMate(Opponnent(currentPlayer))) {
@@ -88,6 +92,17 @@ public class ChessMatch {
 			NextTurn();
 
 		}
+		//special moved piece en passant
+		if(movedPiece instanceof Pawn && (target.getRow() - 2 == source.getRow()||target.getRow() + 2 == source.getRow() )) {
+			enPassantVulnerable = movedPiece;
+		}
+		else {
+			enPassantVulnerable = null;
+		}
+		
+		
+		
+		
 		return (ChessPieces) capturedPiece;
 	}
 
@@ -120,6 +135,23 @@ public class ChessMatch {
 			rook.increaseMoveCount();
 		}
 
+		// specialMove en passant
+		if (p instanceof Pawn) {
+			if (source.getColunm() != target.getColunm() && capturedPieces == null) {
+				Position pawnPosition;
+				if (p.getColor() == Color.WIHTE) {
+					pawnPosition = new Position(target.getRow() + 1, target.getColunm());
+				} else {
+					pawnPosition = new Position(target.getRow() - 1, target.getColunm());
+
+				}
+				capturedPiece = (ChessPieces) board.RemovePiece(pawnPosition);
+				capturedPieces.add(capturedPiece);
+				piecesOnTheBoard.remove(capturedPiece);
+
+			}
+		}
+
 		return capturedPiece;
 	}
 
@@ -150,6 +182,22 @@ public class ChessMatch {
 			rook.decreaseMoveCount();
 		}
 
+		if (p instanceof Pawn) {
+			if (source.getColunm() != target.getColunm() && capturedPieces == enPassantVunerable) {
+				Position pawnPosition;
+				if (p.getColor() == Color.WIHTE) {
+					pawnPosition = new Position(target.getRow() + 1, target.getColunm());
+				} else {
+					pawnPosition = new Position(target.getRow() - 1, target.getColunm());
+
+				}
+				capturedPiece = (ChessPieces) board.RemovePiece(pawnPosition);
+				capturedPieces.add(capturedPiece);
+				piecesOnTheBoard.remove(capturedPiece);
+
+			}
+
+		}
 	}
 
 	private void ValidateSourcePosition(Position position) {
