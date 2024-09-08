@@ -1,5 +1,6 @@
 package chess;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ public class ChessMatch {
 	private boolean check;
 	private boolean checkMate;
 	private ChessPieces enPassantVulnerable;
+	private ChessPieces promoted;
 
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -48,9 +50,13 @@ public class ChessMatch {
 	public boolean getCheckMate() {
 		return checkMate;
 	}
-	
+
 	public ChessPieces getEnPassantVulnerable() {
 		return enPassantVulnerable;
+	}
+
+	public ChessPieces getPromoted() {
+		return promoted;
 	}
 
 	public ChessPieces[][] getPieces() {
@@ -80,9 +86,19 @@ public class ChessMatch {
 			throw new ChessExceptions("you cant put yourself in check ");
 
 		}
-		
-		ChessPieces movedPiece = (ChessPieces)board.pieces(target);
-		
+
+		ChessPieces movedPiece = (ChessPieces) board.pieces(target);
+
+		// specialmove promotion
+		promoted = null;
+		if (movedPiece instanceof Pawn) {
+			if (movedPiece.getColor() == Color.WIHTE && target.getRow() == 0
+					|| movedPiece.getColor() == Color.BLACK && target.getRow() == 7) {
+				promoted = (ChessPieces) board.pieces(target);
+				promoted = replacePromotedPiece("Q");
+			}
+		}
+
 		check = (testCheck(Opponnent(currentPlayer))) ? true : false;
 
 		if (testCheckMate(Opponnent(currentPlayer))) {
@@ -92,18 +108,44 @@ public class ChessMatch {
 			NextTurn();
 
 		}
-		//special moved piece en passant
-		if(movedPiece instanceof Pawn && (target.getRow() - 2 == source.getRow()||target.getRow() + 2 == source.getRow() )) {
+		// special moved piece en passant
+		if (movedPiece instanceof Pawn
+				&& (target.getRow() - 2 == source.getRow() || target.getRow() + 2 == source.getRow())) {
 			enPassantVulnerable = movedPiece;
-		}
-		else {
+		} else {
 			enPassantVulnerable = null;
 		}
-		
-		
-		
-		
+
 		return (ChessPieces) capturedPiece;
+	}
+
+	public ChessPieces replacePromotedPiece(String type) {
+		if (promoted == null) {
+			throw new IllegalStateException("there is no piece to be promoted");
+		}
+		if (!type.equals("B") && !type.equals("N") && !type.equals("R") & !type.equals("Q")) {
+			throw new InvalidParameterException("invalid type for promotion");
+		}
+
+		Position pos = promoted.getChessPosition().toPosition();
+		Piece p = board.RemovePiece(pos);
+		piecesOnTheBoard.remove(p);
+
+		ChessPieces newPiece = newPiece(type, promoted.getColor());
+		board.PlacePiece(newPiece, pos);
+		piecesOnTheBoard.add(newPiece);
+
+		return newPiece;
+	}
+
+	private ChessPieces newPiece(String type, Color color) {
+		if (type.equals("B"))
+			return new Bishop(board, color);
+		if (type.equals("N"))
+			return new Knight(board, color);
+		if (type.equals("Q"))
+			return new Queen(board, color);
+		return new Rook(board, color);
 	}
 
 	public ChessPieces makeMove(Position source, Position target) {
@@ -183,7 +225,8 @@ public class ChessMatch {
 		}
 
 		if (p instanceof Pawn) {
-			if (source.getColunm() != target.getColunm() && capturedPieces == enPassantVunerable) {
+			if (source.getColunm() != target.getColunm() && capturedPieces == enPassantVulnerable) {
+				ChessPieces pawn = (ChessPieces) board.RemovePiece(target);
 				Position pawnPosition;
 				if (p.getColor() == Color.WIHTE) {
 					pawnPosition = new Position(target.getRow() + 1, target.getColunm());
@@ -191,9 +234,7 @@ public class ChessMatch {
 					pawnPosition = new Position(target.getRow() - 1, target.getColunm());
 
 				}
-				capturedPiece = (ChessPieces) board.RemovePiece(pawnPosition);
-				capturedPieces.add(capturedPiece);
-				piecesOnTheBoard.remove(capturedPiece);
+				board.PlacePiece(pawn, pawnPosition);
 
 			}
 
@@ -297,14 +338,14 @@ public class ChessMatch {
 		PlaceNewPiece('f', 1, new Bishop(board, Color.WIHTE));
 		PlaceNewPiece('g', 1, new Knight(board, Color.WIHTE));
 		PlaceNewPiece('h', 1, new Rook(board, Color.WIHTE));
-		PlaceNewPiece('a', 2, new Pawn(board, Color.WIHTE));
-		PlaceNewPiece('b', 2, new Pawn(board, Color.WIHTE));
-		PlaceNewPiece('c', 2, new Pawn(board, Color.WIHTE));
-		PlaceNewPiece('d', 2, new Pawn(board, Color.WIHTE));
-		PlaceNewPiece('e', 2, new Pawn(board, Color.WIHTE));
-		PlaceNewPiece('f', 2, new Pawn(board, Color.WIHTE));
-		PlaceNewPiece('g', 2, new Pawn(board, Color.WIHTE));
-		PlaceNewPiece('h', 2, new Pawn(board, Color.WIHTE));
+		PlaceNewPiece('a', 2, new Pawn(board, Color.WIHTE, this));
+		PlaceNewPiece('b', 2, new Pawn(board, Color.WIHTE, this));
+		PlaceNewPiece('c', 2, new Pawn(board, Color.WIHTE, this));
+		PlaceNewPiece('d', 2, new Pawn(board, Color.WIHTE, this));
+		PlaceNewPiece('e', 2, new Pawn(board, Color.WIHTE, this));
+		PlaceNewPiece('f', 2, new Pawn(board, Color.WIHTE, this));
+		PlaceNewPiece('g', 2, new Pawn(board, Color.WIHTE, this));
+		PlaceNewPiece('h', 2, new Pawn(board, Color.WIHTE, this));
 
 		PlaceNewPiece('a', 8, new Rook(board, Color.BLACK));
 		PlaceNewPiece('b', 8, new Knight(board, Color.BLACK));
@@ -314,12 +355,12 @@ public class ChessMatch {
 		PlaceNewPiece('c', 8, new Bishop(board, Color.BLACK));
 		PlaceNewPiece('f', 8, new Rook(board, Color.BLACK));
 		PlaceNewPiece('g', 8, new Knight(board, Color.BLACK));
-		PlaceNewPiece('b', 7, new Pawn(board, Color.BLACK));
-		PlaceNewPiece('c', 7, new Pawn(board, Color.BLACK));
-		PlaceNewPiece('d', 7, new Pawn(board, Color.BLACK));
-		PlaceNewPiece('e', 7, new Pawn(board, Color.BLACK));
-		PlaceNewPiece('f', 7, new Pawn(board, Color.BLACK));
-		PlaceNewPiece('g', 7, new Pawn(board, Color.BLACK));
-		PlaceNewPiece('h', 7, new Pawn(board, Color.BLACK));
+		PlaceNewPiece('b', 7, new Pawn(board, Color.BLACK, this));
+		PlaceNewPiece('c', 7, new Pawn(board, Color.BLACK, this));
+		PlaceNewPiece('d', 7, new Pawn(board, Color.BLACK, this));
+		PlaceNewPiece('e', 7, new Pawn(board, Color.BLACK, this));
+		PlaceNewPiece('f', 7, new Pawn(board, Color.BLACK, this));
+		PlaceNewPiece('g', 7, new Pawn(board, Color.BLACK, this));
+		PlaceNewPiece('h', 7, new Pawn(board, Color.BLACK, this));
 	}
 }

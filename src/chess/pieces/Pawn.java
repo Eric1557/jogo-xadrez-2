@@ -40,7 +40,23 @@ public class Pawn extends ChessPieces {
 			if (getBoard().PositionExists(p) && getBoard().ThereIsAPiece(p)) {
 				mat[p.getRow()][p.getColunm()] = true;
 			}
-		} else {
+			// special move en passant white
+			if (position.getRow() == 3) {
+				Position left = new Position(position.getRow(), position.getColunm() - 1);
+				if (getBoard().PositionExists(left) && isThereOponnentPiece(left)
+						&& getBoard().pieces(left) == chessMatch.getEnPassantVulnerable()) {
+					mat[left.getRow() - 1][left.getColunm()] = true;
+				}
+				Position right = new Position(position.getRow(), position.getColunm() + 1);
+				if (getBoard().PositionExists(right) && isThereOponnentPiece(right)
+						&& getBoard().pieces(right) == chessMatch.getEnPassantVulnerable()) {
+					mat[right.getRow() - 1][right.getColunm()] = true;
+				}
+			}
+
+		}
+
+		else {
 			p.setValues(position.getRow() + 1, position.getColunm());
 			if (getBoard().PositionExists(p) && !getBoard().ThereIsAPiece(p)) {
 				mat[p.getRow()][p.getColunm()] = true;
@@ -59,19 +75,28 @@ public class Pawn extends ChessPieces {
 			if (getBoard().PositionExists(p) && getBoard().ThereIsAPiece(p)) {
 				mat[p.getRow()][p.getColunm()] = true;
 			}
-			// special move en passant white
-			if (position.getRow() == 3) {
+			// special move en passant black
+			if (position.getRow() == 4) {
 				Position left = new Position(position.getRow(), position.getColunm() - 1);
 				if (getBoard().PositionExists(left) && isThereOponnentPiece(left)
 						&& getBoard().pieces(left) == chessMatch.getEnPassantVulnerable()) {
-					mat[left.getRow() - 1][left.getColunm()] = true;
+					mat[left.getRow() + 1][left.getColunm()] = true;
+				}
+				Position right = new Position(position.getRow(), position.getColunm() + 1);
+				if (getBoard().PositionExists(right) && isThereOponnentPiece(right)
+						&& getBoard().pieces(right) == chessMatch.getEnPassantVulnerable()) {
+					mat[right.getRow() + 1][right.getColunm()] = true;
 				}
 			}
 
 		}
-
 		return mat;
 	}
+
+	
+
+
+
 
 	public String Tostring() {
 		return "p";
